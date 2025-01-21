@@ -9,7 +9,7 @@ export class KycController {
   constructor(private readonly kycService: KycService) {}
 
   @Post(':provider/init')
-  @ApiOperation({ summary: 'Generate KYC token for specified provider' })
+  @ApiOperation({ summary: 'Generate KYC session for specified provider' })
   @ApiParam({
     name: 'provider',
     required: true,
@@ -18,17 +18,17 @@ export class KycController {
   })
   @ApiResponse({
     status: 201,
-    description: 'KYC token generated successfully',
+    description: 'KYC sessopm generated successfully',
   })
   @ApiResponse({
     status: 400,
     description: 'Invalid provider or request parameters',
   })
-  initiateToken(
+  initiateSession(
     @Param('provider') provider: string,
     @Body() body: InitiateKycDto,
   ) {
-    console.log('initiating token: ', {
+    console.log('initiating session: ', {
       provider,
       body,
     });
