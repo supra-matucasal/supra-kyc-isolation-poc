@@ -1,5 +1,5 @@
 // user.model.ts
-import { Table, Column, Model, PrimaryKey } from 'sequelize-typescript';
+import { Table, Column, Model, PrimaryKey, Unique } from 'sequelize-typescript';
 
 @Table({ tableName: 'users' })
 export class User extends Model<User> {
@@ -10,6 +10,7 @@ export class User extends Model<User> {
   @Column
   name: string;
 
+  @Unique
   @Column
   email: string;
 

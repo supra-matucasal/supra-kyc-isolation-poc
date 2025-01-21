@@ -14,6 +14,7 @@ import {
   DB_PASSWORD,
   DB_DATABASE,
 } from './config';
+import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     SequelizeModule.forRoot({
@@ -29,6 +30,7 @@ import {
       synchronize: APP_ENV === 'development',
     }),
     KycModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
