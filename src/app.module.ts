@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { KycModule } from './modules/kyc/kyc.module';
+import { KycModule } from './kyc/kyc.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { KycVerification } from './models/kyc-verification.model';
 import { SynapsVerification } from './models/synaps-verification.model';
