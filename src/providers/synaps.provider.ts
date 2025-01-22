@@ -5,12 +5,15 @@ import {
 } from './kyc.provider.interface';
 import { InjectModel } from '@nestjs/sequelize';
 import { SynapsVerification } from '../models/synaps-verification.model';
+import { SYNAPS_STATUSES, KYC_STATUSES } from '../config';
+import { VerificationService } from '../kyc/verification.service';
 
 @Injectable()
 export class SynapsProvider implements IKycProviderService {
   constructor(
     @InjectModel(SynapsVerification)
     private synapsVerificationModel: typeof SynapsVerification,
+    private verificationService: VerificationService,
   ) {}
   async initiateKycSession(
     verificationId: number,
@@ -31,13 +34,47 @@ export class SynapsProvider implements IKycProviderService {
 
   async handleWebhook(payload: any): Promise<void> {
     console.log('handleWebhook with synaps', payload);
+
+    try {
+      if (!payload?.session_id) {
+        throw new Error('Missing required session_id in webhook payload');
+      }
+
+      //const user = await getUserPlain({ synapsSessionId: req.body.session_id });
+      const verification =
+        await this.verificationService.getVerificationBySynapsSessionId(
+          payload.session_id,
+        );
+      if (!verification) {
+        throw new Error('Verification not found for provided session_id');
+      }
+
+      if (payload.status === SYNAPS_STATUSES.APPROVED) {
+        await this.verificationService.updateVerificationStatus(
+          verification.id,
+          KYC_STATUSES.COMPLETED,
+        );
+      } else {
+        await this.verificationService.updateVerificationStatus(
+          verification.id,
+          KYC_STATUSES.DECLINED,
+        );
+      }
+
+      //await updateUser({ id: user.id }, { kycStatus: KYC_STATUSES.COMPLETED });
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getExistingKycSession(
-    verification: any,
+    kycVerificationId: number,
   ): Promise<SynapsKycSessionResponse> {
+    const verification = await this.synapsVerificationModel.findOne({
+      where: { id: kycVerificationId },
+    });
     return {
-      synapsSessionId: verification.synapsData.sessionId,
+      synapsSessionId: verification?.sessionId,
     };
   }
 

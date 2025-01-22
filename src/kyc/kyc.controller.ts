@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Param, Get } from '@nestjs/common';
+import { Body, Controller, Post, Param, Get, UseGuards } from '@nestjs/common';
 import { KycService } from './kyc.service';
 import { InitiateKycDto } from './dtos/initiate-kyc.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { SynapsWebhookGuard } from '../guards/kyc.webhooks.guard';
 
 @Controller('supra-kyc')
 @ApiTags('Supra KYC')
@@ -43,5 +44,16 @@ export class KycController {
   })
   getStatus(@Param('userid') userId: number) {
     return this.kycService.getStatus(userId);
+  }
+
+  @Post(':provider/webhook')
+  @ApiOperation({ summary: 'Handle webhook from KYC provider' })
+  @ApiResponse({
+    status: 200,
+    description: 'Webhook handled successfully',
+  })
+  @UseGuards(SynapsWebhookGuard)
+  handleWebhook(@Param('provider') provider: string, @Body() body: any) {
+    return this.kycService.handleWebhook(provider, body);
   }
 }

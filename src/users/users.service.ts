@@ -24,7 +24,7 @@ export class UsersService {
       where: { email },
       defaults: {
         email,
-        kycStatus: 'pending',
+        //kycStatus: 'pending',
       },
     });
     return user;

@@ -7,6 +7,7 @@ import { UsersModule } from '../users/users.module';
 import { KycVerification } from '../models/kyc-verification.model';
 import { SynapsVerification } from '../models/synaps-verification.model';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { VerificationService } from './verification.service';
 
 @Module({
   imports: [
@@ -14,6 +15,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
     SequelizeModule.forFeature([KycVerification, SynapsVerification]),
   ],
   controllers: [KycController],
-  providers: [KycService, SynapsProvider, KycFactoryProvider],
+  providers: [
+    KycService,
+    SynapsProvider,
+    KycFactoryProvider,
+    VerificationService,
+  ],
+  exports: [KycService, VerificationService],
 })
 export class KycModule {}

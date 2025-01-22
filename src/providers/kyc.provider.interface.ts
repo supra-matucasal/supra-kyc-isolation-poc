@@ -15,6 +15,8 @@ export interface IKycProviderService {
   initiateKycSession(
     verificationId: number,
   ): Promise<ProviderKycSessionResponse>;
-  getExistingKycSession(verification: any): Promise<ProviderKycSessionResponse>;
+  getExistingKycSession(
+    verificationId: number,
+  ): Promise<ProviderKycSessionResponse>;
   handleWebhook(payload: any): Promise<void>;
 }
