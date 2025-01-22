@@ -5,6 +5,7 @@ import { KycVerification } from '../models/kyc-verification.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { KYC_STATUSES } from '../config';
 import { SynapsVerification } from '../models/synaps-verification.model';
+import { InitiateKycDto } from './dtos/initiate-kyc.dto';
 
 @Injectable()
 export class KycService {
@@ -15,9 +16,9 @@ export class KycService {
     private kycVerificationModel: typeof KycVerification,
   ) {}
 
-  async initiateKycSession(provider: string, email: string) {
+  async initiateKycSession(provider: string, payload: InitiateKycDto) {
     // Use the user service to find or create the user
-    const user = await this.usersService.findOrCreate(email);
+    const user = await this.usersService.findOrCreate(payload.email);
 
     // Check for existing verifications
     const existingVerification = await this.kycVerificationModel.findOne({
@@ -43,6 +44,7 @@ export class KycService {
       userId: user.id,
       provider,
       status: KYC_STATUSES.NOT_SUBMITTED,
+      callbackUrl: payload.callbackUrl,
     });
 
     // Get provider service and initiate KYC
@@ -81,44 +83,5 @@ export class KycService {
         },
       ],
     });
-  }
-
-  async updateVerificationStatus(verificationId: number, status: string) {
-    const verification =
-      await this.kycVerificationModel.findByPk(verificationId);
-
-    if (!verification) {
-      throw new Error('Verification not found');
-    }
-
-    // Update verification status
-    await verification.update({ status });
-
-    // Update user KYC status
-    await this.usersService.updateKycStatus(verification.userId, status);
-
-    return verification;
-  }
-
-  async getUserBySynapsSessionId(sessionId: string) {
-    const verification = await this.kycVerificationModel.findOne({
-      where: {
-        provider: 'synaps',
-      },
-      include: [
-        {
-          model: SynapsVerification,
-          where: {
-            sessionId: sessionId,
-          },
-        },
-      ],
-    });
-
-    if (!verification) {
-      return null;
-    }
-
-    return this.usersService.findByUserId(verification.userId);
   }
 }

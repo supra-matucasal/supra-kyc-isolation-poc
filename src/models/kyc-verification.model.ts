@@ -18,16 +18,13 @@ export class KycVerification extends Model<KycVerification> {
   @Column({ autoIncrement: true })
   id: number;
 
-  // Optionally link to a user table if you have one
   // @ForeignKey(() => User)
   @Column
   userId: number;
 
-  // Which provider is used for this verification? e.g. "synaps" or "onfido"
   @Column
-  provider: string; // or an enum-like string
+  provider: string;
 
-  // High-level status for the KYC process: "pending", "approved", "rejected", etc.
   @Column
   status: string;
 
@@ -36,6 +33,9 @@ export class KycVerification extends Model<KycVerification> {
 
   @UpdatedAt
   updatedAt: Date;
+
+  @Column
+  callbackUrl: string;
 
   // Associations with submodels
   @HasOne(() => SynapsVerification)

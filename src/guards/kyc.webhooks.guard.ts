@@ -4,18 +4,21 @@ import {
   Injectable,
   ExecutionContext,
   UnauthorizedException,
+  CanActivate,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-
 import { SYNAPS_WEBHOOK_SECRET_TOKEN } from '../config';
+
 @Injectable()
-export class SynapsWebhookGuard extends AuthGuard('synaps') {
+export class SynapsWebhookGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const signature = request.headers['x-synaps-signature'];
-    if (signature !== SYNAPS_WEBHOOK_SECRET_TOKEN) {
-      throw new UnauthorizedException('Invalid signature');
+
+    const secret = request.query.secret;
+
+    if (secret !== SYNAPS_WEBHOOK_SECRET_TOKEN) {
+      throw new UnauthorizedException('Invalid SECRET TOKEN');
     }
-    return super.canActivate(context);
+
+    return true;
   }
 }

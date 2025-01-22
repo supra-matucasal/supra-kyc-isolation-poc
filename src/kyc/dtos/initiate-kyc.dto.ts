@@ -8,4 +8,10 @@ export class InitiateKycDto {
   })
   @IsEmail()
   email: string;
+
+  @ApiProperty({
+    description: 'The callback URL to send the webhook to',
+    example: 'https://example.com/kyc/callback',
+  })
+  callbackUrl: string;
 }

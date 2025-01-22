@@ -29,11 +29,7 @@ export class KycController {
     @Param('provider') provider: string,
     @Body() body: InitiateKycDto,
   ) {
-    console.log('initiating session: ', {
-      provider,
-      body,
-    });
-    return this.kycService.initiateKycSession(provider, body.email);
+    return this.kycService.initiateKycSession(provider, body);
   }
 
   @Get('status/:userid')

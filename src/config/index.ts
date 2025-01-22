@@ -18,8 +18,8 @@ export const KYC_STATUSES = {
 };
 
 export const SYNAPS_STATUSES = {
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
 };
 
 export const SYNAPS_API_TOKEN = process.env.SYNAPS_API_TOKEN;
